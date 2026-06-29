@@ -1,21 +1,56 @@
-# Solo Leveling Discord RPG (with Content Database)
+# Solo Leveling Discord RPG
 
-Node.js + discord.js v14 + MongoDB RPG bot with comprehensive Solo Leveling theme and content.
+**Complete A-to-Z Solo Leveling RPG bot with all characters, enemies, dungeons, and systems.**
 
-## Features
-- ✅ Character profiles & leveling system
-- ✅ Combat engine (player vs. monsters)
-- ✅ Inventory & equipment system
-- ✅ Comprehensive character database (200+ hunters)
-- ✅ Shadow army system (Igris, Beru, Tank, Iron, Bellion, etc.)
-- ✅ Weapons & armor with stats
-- ✅ Boss monsters & gate system
-- ✅ Shop system
+## Current Features (Phases 1-3)
 
-## Requirements
-- Node 18+
-- MongoDB (Atlas or local)
-- Discord bot token & application ID
+### Core Gameplay
+- ✅ Hunter profiles & progression
+- ✅ Combat engine (turn-based)
+- ✅ EXP & leveling system
+- ✅ Inventory & equipment
+- ✅ Shop system (`/buy`, `/sell`)
+- ✅ Gate exploration (`/gate [rank]` E-S with multi-wave dungeons)
+- ✅ Shadow summons (`/summon [shadow]`)
+- ✅ Shadow army tracking (`/shadows-army`)
+- ✅ Quests system (`/quest list|accept|progress`)
+- ✅ Skills system (`/skills`)
+
+### Content Database
+- ✅ 18+ hunters (all ranks)
+- ✅ 7 shadows (Igris, Beru, Tank, Iron, Bellion, Tusk, soldiers)
+- ✅ 20+ weapons & armor
+- ✅ 7 bosses
+- ✅ 20+ monsters (E-S rank)
+- ✅ 10+ gates (E-S rank)
+- ✅ 8+ quests (story & daily)
+- ✅ 10+ skills (physical, shadow, magic, support, ultimate)
+
+## Commands
+
+### Profile & Progression
+- `/start` — Create hunter profile
+- `/profile` — View your stats
+- `/hunt` — Fight random monsters
+- `/quest [list|accept|progress]` — Manage quests
+- `/skills` — View learned skills
+
+### Combat & Exploration
+- `/gate [rank]` — Enter gate (E/D/C/B/A/S) with multi-wave dungeons
+- `/summon [shadowname]` — Summon shadow to your army
+- `/shadows-army` — View your summoned shadows
+
+### Inventory & Economy
+- `/inventory` — View items
+- `/equip [itemname]` — Equip weapon/armor
+- `/shop` — View items for sale
+- `/buy [itemname] [quantity]` — Purchase item
+- `/sell [itemname] [quantity]` — Sell item
+
+### Reference
+- `/hunters [rank]` — View hunters by rank
+- `/shadows [rarity]` — View shadow army database
+- `/weapons [type] [rarity]` — View weapons/armor
 
 ## Setup
 
@@ -25,7 +60,7 @@ cd Solo-levelling
 npm install
 ```
 
-Create `.env` from `.env.example`:
+Create `.env`:
 ```
 DISCORD_TOKEN=your-token
 CLIENT_ID=your-client-id
@@ -38,89 +73,52 @@ Register commands:
 npm run register-commands
 ```
 
-Start bot:
+Start:
 ```bash
 npm run dev
 ```
 
-## Available Commands
-
-### Profile & Progression
-- `/start` — Create hunter profile
-- `/profile` — View your stats
-- `/hunt` — Fight monsters for EXP & gold
-
-### Inventory & Equipment
-- `/inventory` — View your items
-- `/equip [itemname]` — Equip weapon/armor
-- `/shop` — Browse available items
-
-### Reference (Databases)
-- `/hunters [rank]` — View Solo Leveling hunters by rank
-- `/shadows [rarity]` — View shadow army by rarity
-- `/weapons [type] [rarity]` — View weapons/armor by type and rarity
-
-## Data Files
-
-All character, weapon, and monster data stored in `/src/data/`:
-- `hunters.js` — 200+ hunters (S-Rank, A-Rank, etc.) with images
-- `shadows.js` — Shadow army (Igris, Beru, Tank, Iron, Bellion, Tusk)
-- `weapons.js` — Weapons, armor, accessories with stats
-- `bosses.js` — Dungeon & world bosses
-- `monsters.js` — Common monsters by rank (E-S)
-- `gates.js` — Gate system by rank with difficulty levels
-
-Each entry includes:
-- Name, rank, level
-- Stats (attack, defense, HP, MP)
-- Rarity (common, uncommon, rare, epic, legendary)
-- High-quality image URLs from Solo Leveling Fandom
-- Descriptions
-
-## Architecture
+## Database Structure
 
 ```
-src/
-├── index.js (bot bootstrap)
-├── commands/ (slash commands)
-│   ├── start.js
-│   ├── profile.js
-│   ├── hunt.js
-│   ├── inventory.js
-│   ├── equip.js
-│   ├── shop.js
-│   ├── hunters.js
-│   ├── shadows.js
-│   ├── weapons-list.js
-├── models/ (Mongoose schemas)
-│   ├── User.js
-│   ├── Item.js
-│   ├── Inventory.js
-│   ├── Enemy.js
-├── services/ (business logic)
-│   ├── combat.js
-│   ├── inventory.js
-├── data/ (game content)
-│   ├── hunters.js
-│   ├── shadows.js
-│   ├── weapons.js
-│   ├── bosses.js
-│   ├── monsters.js
-│   ├── gates.js
-├── database/
-│   └── mongoose.js
-├── handlers/
-│   └── commandHandler.js
+src/data/
+├── hunters.js (18+ hunters with images)
+├── shadows.js (7 shadows)
+├── weapons.js (20+ items)
+├── bosses.js (7 bosses)
+├── monsters.js (20+ monsters E-S rank)
+├── gates.js (10+ gates E-S rank)
+├── quests.js (8+ quests)
+└── skills.js (10+ skills)
+
+src/models/
+├── User.js
+├── Item.js
+├── Inventory.js
+├── Enemy.js
+├── Shadow.js
+├── Skill.js
+└── Quest.js
+
+src/commands/
+├── start.js, profile.js
+├── hunt.js, gate.js
+├── summon.js, shadows-army.js
+├── buy.js, sell.js, shop.js, inventory.js, equip.js
+├── quest.js, skills.js
+├── hunters.js, shadows.js, weapons-list.js
+└── (more coming...)
 ```
 
-## Next Steps
-- ✅ Inventory system
-- ⬜ `/buy [item]` command to purchase from shop
-- ⬜ `/gate [rank]` dungeon exploration
-- ⬜ `/summon [shadow]` shadow recruitment
-- ⬜ Raids & guilds
-- ⬜ PvP Arena
-- ⬜ Admin dashboard
+## Upcoming Features
+
+- **Phase 4**: Advanced Combat & Skills (`/use-skill`)
+- **Phase 5**: Raids & Boss Encounters (`/raid [boss]`)
+- **Phase 6**: Guild System (`/guild create|join|war`)
+- **Phase 7**: PvP Arena (`/pvp [opponent]`)
+- **Phase 8**: Story Mode & Advanced Quests
+- **Phase 9**: Admin Dashboard (web UI)
+- **Phase 10**: CI/CD, Tests, Docker
 
 ## License
 MIT
