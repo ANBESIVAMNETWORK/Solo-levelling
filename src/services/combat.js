@@ -6,13 +6,17 @@
  * Returns result object and mutates player (exp, gold) but DOES NOT save.
  */
 
+const Inventory = require('../models/Inventory');
+
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function computePlayerAtk(player) {
-  // Simple formula: base 10 + level*5
-  return 10 + (player.level - 1) * 5;
+  // Simple formula: base 10 + level*5 + equipment bonus
+  let base = 10 + (player.level - 1) * 5;
+  // equipment.weapon would add here if resolved
+  return base;
 }
 
 function computeDamage(attackerAtk, defenderDef) {
@@ -52,10 +56,7 @@ module.exports.simulateCombat = function simulateCombat(player, enemyTemplate) {
 
   // Apply to player (mutate doc)
   player.currentHp = Math.max(0, playerHp);
-  // For simplicity, we don't consume MP in this basic flow
   player.currentMp = player.currentMp ?? player.maxMp;
-
-  // Grant gold
   player.gold = (player.gold || 0) + goldGain;
 
   // Grant EXP and compute level ups

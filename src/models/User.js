@@ -11,6 +11,11 @@ const UserSchema = new mongoose.Schema({
   currentHp: { type: Number, default: 100 },
   currentMp: { type: Number, default: 50 },
   gold: { type: Number, default: 0 },
+  equipment: {
+    weapon: { type: mongoose.Schema.Types.ObjectId, ref: 'Item', default: null },
+    armor: { type: mongoose.Schema.Types.ObjectId, ref: 'Item', default: null },
+    accessory: { type: mongoose.Schema.Types.ObjectId, ref: 'Item', default: null }
+  },
   createdAt: { type: Date, default: Date.now }
 });
 

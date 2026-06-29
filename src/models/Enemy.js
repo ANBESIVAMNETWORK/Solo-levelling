@@ -9,6 +9,7 @@ const EnemySchema = new mongoose.Schema({
   defense: { type: Number, default: 0 },
   expReward: { type: Number, default: 20 },
   goldReward: { type: Number, default: 10 },
+  lootTable: [{ itemId: mongoose.Schema.Types.ObjectId, rarity: String, chance: Number }],
   createdAt: { type: Date, default: Date.now }
 });
 

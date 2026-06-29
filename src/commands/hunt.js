@@ -1,6 +1,7 @@
 // src/commands/hunt.js
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const User = require('../models/User');
+const Inventory = require('../models/Inventory');
 const { simulateCombat } = require('../services/combat');
 
 // Small roster of enemy templates for quick start
@@ -11,12 +12,18 @@ const ENEMIES = [
   { name: 'Cultist', level: 3, maxHp: 65, attack: 14, defense: 4, expReward: 70, goldReward: 35 }
 ];
 
+// Simple loot tables by enemy
+const LOOT_DROPS = {
+  'Goblin': [{ name: 'Rusty Dagger', rarity: 'common', type: 'weapon', price: 50 }],
+  'Wolf': [{ name: 'Wolf Hide', rarity: 'uncommon', type: 'material', price: 75 }],
+  'Skeleton': [{ name: 'Bone Armor', rarity: 'uncommon', type: 'armor', price: 150 }],
+  'Cultist': [{ name: 'Cultist Robes', rarity: 'rare', type: 'armor', price: 300 }]
+};
+
 function pickEnemyForPlayer(player) {
-  // Simple scaling by player level
   const lvl = Math.max(1, player.level);
   const idx = Math.min(ENEMIES.length - 1, Math.floor((lvl - 1) / 2));
   const template = ENEMIES[Math.max(0, idx)];
-  // Slight random variation
   const enemy = { ...template };
   enemy.level = Math.max(1, template.level + Math.floor(Math.random() * 2));
   enemy.maxHp = Math.floor(template.maxHp * (1 + Math.random() * 0.3));
@@ -42,19 +49,33 @@ module.exports = {
     const enemy = pickEnemyForPlayer(user);
     const result = simulateCombat(user, enemy);
 
-    // Save user state (HP, EXP, gold, level)
+    // Generate loot on victory
+    let lootText = '';
+    if (result.victory) {
+      const lootTable = LOOT_DROPS[enemy.name] || [];
+      if (lootTable.length > 0 && Math.random() > 0.5) {
+        const drop = lootTable[Math.floor(Math.random() * lootTable.length)];
+        // In a real system, create Item in DB and add to inventory
+        // For now, just log it
+        lootText = `\n**Loot:** ${drop.name} (${drop.rarity})`;
+        result.log.push(lootText);
+      }
+    }
+
+    // Save user state
     await user.save();
 
     const embed = new EmbedBuilder()
       .setTitle(`Hunt: ${enemy.name}`)
       .setDescription(result.log.join('\n'))
       .addFields(
-        { name: 'Result', value: result.victory ? 'Victory' : 'Defeat', inline: true },
+        { name: 'Result', value: result.victory ? '✅ Victory' : '❌ Defeat', inline: true },
         { name: 'EXP Gained', value: String(result.expGain), inline: true },
         { name: 'Gold Gained', value: String(result.goldGain), inline: true },
         { name: 'Turns', value: String(result.turns), inline: true },
         { name: 'Your Level', value: String(user.level), inline: true },
-        { name: 'Your EXP', value: `${user.exp}/${user.expToNextLevel()}`, inline: true }
+        { name: 'Your EXP', value: `${user.exp}/${user.expToNextLevel()}`, inline: true },
+        { name: 'Your HP', value: `${user.currentHp}/${user.maxHp}`, inline: true }
       )
       .setTimestamp();
 
